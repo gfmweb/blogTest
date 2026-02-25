@@ -5,6 +5,7 @@ declare(strict_types=1);
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\Config\Database;
+use App\ValueObject\Article\ArticleSlug;
 use App\ValueObject\Category\CategorySlug;
 
 $pdo = Database::getConnection();
@@ -44,10 +45,11 @@ $articles = [
 ];
 
 $articleIds = [];
-$stmtArt = $pdo->prepare('INSERT INTO articles (image, name, description, text, view_count, published_at, created_at) VALUES (?, ?, ?, ?, 0, NOW(), NOW())');
+$stmtArt = $pdo->prepare('INSERT INTO articles (slug, image, name, description, text, view_count, published_at, created_at) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())');
 
 foreach ($articles as $art) {
-    $stmtArt->execute([null, $art['name'], $art['description'], $art['text']]);
+    $slug = ArticleSlug::fromName($art['name'])->value();
+    $stmtArt->execute([$slug, null, $art['name'], $art['description'], $art['text']]);
     $articleIds[] = (int) $pdo->lastInsertId();
 }
 

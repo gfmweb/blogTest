@@ -26,6 +26,7 @@ COMMENT='Категории статей';
 
 CREATE TABLE articles (
     id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    slug         VARCHAR(255) NOT NULL COMMENT 'ЧПУ-идентификатор статьи',
     image        VARCHAR(255) NULL COMMENT 'Путь к изображению',
     name         VARCHAR(255) NOT NULL COMMENT 'Название статьи',
     description  VARCHAR(500) NULL COMMENT 'Краткое описание',
@@ -34,6 +35,7 @@ CREATE TABLE articles (
     published_at DATETIME NULL COMMENT 'Дата и время публикации',
     created_at   DATETIME NOT NULL COMMENT 'Дата и время создания',
     PRIMARY KEY (id),
+    UNIQUE KEY uk_articles_slug (slug),
     KEY idx_articles_published_at (published_at),
     KEY idx_articles_view_count (view_count)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
