@@ -155,6 +155,28 @@ $breakpoint-tablet: 768px;
   padding: 0;
 }
 
+.article-preview-title {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.article-preview-description,
+.article-preview-excerpt {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.article-preview-excerpt {
+  line-height: 1.4;
+}
+
+.article-preview-more {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .article-preview-image {
   display: block;
   margin-bottom: 0.5rem;

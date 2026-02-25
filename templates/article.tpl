@@ -29,7 +29,14 @@
                                     <img src="/{$sim->image}" alt="{$sim->name|escape}" loading="lazy">
                                 </a>
                             {/if}
-                            <a href="/article/{$sim->slug}">{$sim->name}</a>
+                            <a href="/article/{$sim->slug}" class="article-preview-title">{$sim->name}</a>
+                            {if $sim->description}
+                                <p class="article-preview-description">{$sim->description|escape}</p>
+                            {/if}
+                            {if $sim->text}
+                                <p class="article-preview-excerpt">{$sim->text|truncate:200:"..."|escape}</p>
+                            {/if}
+                            <a href="/article/{$sim->slug}" class="article-preview-more">Подробнее</a>
                         </li>
                     {/foreach}
                 </ul>
