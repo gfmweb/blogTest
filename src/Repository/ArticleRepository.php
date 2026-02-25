@@ -34,20 +34,34 @@ final class ArticleRepository
         return $this->mapper->fromRow($row, $categoryRows);
     }
 
-    /** @return ArticleDto[] */
-    public function getLatestByCategoryId(int $categoryId, int $limit = 3): array
+    /**
+     * @return array<int, ArticleDto[]> категория_id => список статей
+     */
+    public function getLatestGroupedByCategory(int $limitPerCategory = 3): array
     {
-        $limit = max(1, min(100, $limit));
-        $stmt = $this->pdo->prepare(
-            'SELECT a.id, a.slug, a.image, a.name, a.description, a.text, a.view_count, a.published_at, a.created_at
-             FROM articles a
-             INNER JOIN article_category ac ON ac.article_id = a.id AND ac.category_id = ?
-             ORDER BY a.published_at DESC
-             LIMIT ' . $limit
-        );
-        $stmt->execute([$categoryId]);
-        return $this->fetchAllFromStatement($stmt);
+        $limitPerCategory = max(1, min(100, $limitPerCategory));
+        $sql = 'WITH ranked AS (
+            SELECT ac.category_id, a.id, a.slug, a.image, a.name, a.description, a.text,
+                   a.view_count, a.published_at, a.created_at,
+                   ROW_NUMBER() OVER (PARTITION BY ac.category_id ORDER BY a.published_at DESC) AS rn
+            FROM article_category ac
+            INNER JOIN articles a ON a.id = ac.article_id
+        )
+        SELECT category_id, id, slug, image, name, description, text, view_count, published_at, created_at
+        FROM ranked
+        WHERE rn <= ?
+        ORDER BY category_id, rn';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$limitPerCategory]);
+        $byCategory = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $categoryId = (int) $row['category_id'];
+            unset($row['category_id']);
+            $byCategory[$categoryId][] = $this->mapper->fromRow($row, []);
+        }
+        return $byCategory;
     }
+
 
     /**
      * @return array{items: ArticleDto[], total: int}
@@ -67,33 +81,21 @@ final class ArticleRepository
         $countStmt->execute([$categoryId]);
         $total = (int) $countStmt->fetchColumn();
 
+        $perPage = max(1, min(100, $perPage));
         $offset = ($page - 1) * $perPage;
+        $limitInt = (int) $perPage;
+        $offsetInt = (int) $offset;
         $stmt = $this->pdo->prepare(
             "SELECT a.id, a.slug, a.image, a.name, a.description, a.text, a.view_count, a.published_at, a.created_at
              FROM articles a
              INNER JOIN article_category ac ON ac.article_id = a.id AND ac.category_id = ?
              ORDER BY a.{$orderColumn} DESC
-             LIMIT {$perPage} OFFSET {$offset}"
+             LIMIT {$limitInt} OFFSET {$offsetInt}"
         );
         $stmt->execute([$categoryId]);
         $items = $this->fetchAllFromStatement($stmt);
 
         return ['items' => $items, 'total' => $total];
-    }
-
-    public function getById(int $id): ?ArticleDto
-    {
-        $stmt = $this->pdo->prepare(
-            'SELECT id, slug, image, name, description, text, view_count, published_at, created_at
-             FROM articles WHERE id = ? LIMIT 1'
-        );
-        $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$row) {
-            return null;
-        }
-        $categoryRows = $this->fetchCategoryRowsForArticle($id);
-        return $this->mapper->fromRow($row, $categoryRows);
     }
 
     public function incrementViewCount(int $id): void
@@ -109,6 +111,7 @@ final class ArticleRepository
             return [];
         }
         $limit = max(1, min(100, $limit));
+        $limitInt = (int) $limit;
         $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
         $params = array_merge($categoryIds, [$articleId]);
         $stmt = $this->pdo->prepare(
@@ -118,7 +121,7 @@ final class ArticleRepository
              WHERE a.id != ?
              GROUP BY a.id
              ORDER BY COUNT(ac.category_id) DESC, a.published_at DESC
-             LIMIT {$limit}"
+             LIMIT {$limitInt}"
         );
         $stmt->execute($params);
         return $this->fetchAllFromStatement($stmt);

@@ -40,9 +40,6 @@ final class Database
         return $pdo;
     }
 
-    /**
-     * Подключение без выбора БД (для миграций: CREATE DATABASE).
-     */
     public static function getConnectionWithoutDatabase(): PDO
     {
         self::loadEnv();
@@ -58,11 +55,6 @@ final class Database
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]);
-    }
-
-    public static function resetConnection(): void
-    {
-        self::$connection = null;
     }
 
     private static function loadEnv(): void

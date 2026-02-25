@@ -24,40 +24,6 @@ final class CategoryRepository
         return $row ? $this->mapper->fromRow($row) : null;
     }
 
-    public function getAll(): array
-    {
-        $stmt = $this->pdo->query('SELECT id, slug, name, description FROM categories ORDER BY name');
-        $result = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $result[] = $this->mapper->fromRow($row);
-        }
-        return $result;
-    }
-
-    public function getById(int $id): ?CategoryDto
-    {
-        $stmt = $this->pdo->prepare('SELECT id, slug, name, description FROM categories WHERE id = ? LIMIT 1');
-        $stmt->execute([$id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? $this->mapper->fromRow($row) : null;
-    }
-
-    /** @return CategoryDto[] */
-    public function getByIds(array $ids): array
-    {
-        if ($ids === []) {
-            return [];
-        }
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $stmt = $this->pdo->prepare("SELECT id, slug, name, description FROM categories WHERE id IN ($placeholders) ORDER BY name");
-        $stmt->execute(array_values($ids));
-        $result = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $result[] = $this->mapper->fromRow($row);
-        }
-        return $result;
-    }
-
     /** @return CategoryDto[] */
     public function getOnlyWithArticles(): array
     {

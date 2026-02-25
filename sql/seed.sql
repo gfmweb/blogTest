@@ -1,5 +1,3 @@
--- Сидинг: категории, статьи и связь многие-ко-многим (соответствует scripts/seed.php)
-
 USE blog;
 
 INSERT INTO categories (name, slug, description) VALUES

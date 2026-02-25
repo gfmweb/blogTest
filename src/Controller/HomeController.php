@@ -20,12 +20,12 @@ final class HomeController
     public function index(): string
     {
         $categories = $this->categoryRepository->getOnlyWithArticles();
+        $articlesByCategoryId = $this->articleRepository->getLatestGroupedByCategory(3);
         $categoriesWithArticles = [];
         foreach ($categories as $category) {
-            $articles = $this->articleRepository->getLatestByCategoryId($category->id, 3);
             $categoriesWithArticles[] = [
                 'category' => $category,
-                'articles' => $articles,
+                'articles' => $articlesByCategoryId[$category->id] ?? [],
             ];
         }
         $this->smarty->assign('pageTitle', 'Блог');
