@@ -37,14 +37,15 @@ final class ArticleRepository
     /** @return ArticleDto[] */
     public function getLatestByCategoryId(int $categoryId, int $limit = 3): array
     {
+        $limit = max(1, min(100, $limit));
         $stmt = $this->pdo->prepare(
             'SELECT a.id, a.slug, a.image, a.name, a.description, a.text, a.view_count, a.published_at, a.created_at
              FROM articles a
              INNER JOIN article_category ac ON ac.article_id = a.id AND ac.category_id = ?
              ORDER BY a.published_at DESC
-             LIMIT ?'
+             LIMIT ' . $limit
         );
-        $stmt->execute([$categoryId, $limit]);
+        $stmt->execute([$categoryId]);
         return $this->fetchAllFromStatement($stmt);
     }
 
@@ -107,8 +108,9 @@ final class ArticleRepository
         if ($categoryIds === []) {
             return [];
         }
+        $limit = max(1, min(100, $limit));
         $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
-        $params = array_merge($categoryIds, [$articleId, $limit]);
+        $params = array_merge($categoryIds, [$articleId]);
         $stmt = $this->pdo->prepare(
             "SELECT a.id, a.slug, a.image, a.name, a.description, a.text, a.view_count, a.published_at, a.created_at
              FROM articles a
@@ -116,7 +118,7 @@ final class ArticleRepository
              WHERE a.id != ?
              GROUP BY a.id
              ORDER BY COUNT(ac.category_id) DESC, a.published_at DESC
-             LIMIT ?"
+             LIMIT {$limit}"
         );
         $stmt->execute($params);
         return $this->fetchAllFromStatement($stmt);
