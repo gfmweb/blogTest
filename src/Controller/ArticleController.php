@@ -19,6 +19,20 @@ final class ArticleController
 
     public function show(string $slug): string
     {
-        return 'OK';
+        $article = $this->articleRepository->getBySlug($slug);
+        if ($article === null) {
+            http_response_code(404);
+            return $this->smarty->fetch('404.tpl');
+        }
+
+        $this->articleRepository->incrementViewCount($article->id);
+
+        $categoryIds = array_map(fn ($c) => $c->id, $article->categories);
+        $similar = $this->articleRepository->getSimilar($article->id, $categoryIds, 3);
+
+        $this->smarty->assign('article', $article);
+        $this->smarty->assign('similar', $similar);
+
+        return $this->smarty->fetch('article.tpl');
     }
 }
