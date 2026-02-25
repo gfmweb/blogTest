@@ -1,0 +1,10 @@
+{
+  "name": "blog-test",
+  "private": true,
+  "scripts": {
+    "build:css": "sass scss/main.scss public/css/main.css --no-source-map"
+  },
+  "devDependencies": {
+    "sass": "^1.69.0"
+  }
+}
