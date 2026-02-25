@@ -19,6 +19,16 @@ final class HomeController
 
     public function index(): string
     {
-        return 'OK';
+        $categories = $this->categoryRepository->getOnlyWithArticles();
+        $categoriesWithArticles = [];
+        foreach ($categories as $category) {
+            $articles = $this->articleRepository->getLatestByCategoryId($category->id, 3);
+            $categoriesWithArticles[] = [
+                'category' => $category,
+                'articles' => $articles,
+            ];
+        }
+        $this->smarty->assign('categoriesWithArticles', $categoriesWithArticles);
+        return $this->smarty->fetch('home.tpl');
     }
 }
