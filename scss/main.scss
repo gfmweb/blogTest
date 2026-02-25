@@ -13,7 +13,10 @@ body {
   line-height: 1.5;
   max-width: 720px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1rem 1rem 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -45,11 +48,11 @@ main {
     margin-bottom: 2rem;
   }
 
-  ul {
+  ul:not(.article-list) {
     padding-left: 1.25rem;
   }
 
-  li {
+  li:not(.article-preview) {
     margin-bottom: 0.5rem;
   }
 }
@@ -66,4 +69,115 @@ nav {
   a {
     margin-right: 1rem;
   }
+}
+
+.site-header {
+  background: #2d5a5a;
+  color: #fff;
+  margin: 0 calc(-50vw + 50%);
+  margin-bottom: 2rem;
+  padding: 0.75rem 1rem;
+
+  a {
+    color: inherit;
+  }
+}
+
+.header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-logo {
+  margin: 0;
+  font-size: 1.25rem;
+
+  a:hover {
+    text-decoration: none;
+    opacity: 0.9;
+  }
+}
+
+.site-nav {
+  a {
+    margin-left: 1rem;
+  }
+}
+
+.site-main {
+  flex: 1;
+}
+
+.site-footer {
+  background: #2d5a5a;
+  color: #fff;
+  margin: 0 calc(-50vw + 50%);
+  margin-top: calc(3rem + 10px);
+  padding: 1rem;
+
+  a {
+    color: inherit;
+  }
+}
+
+.footer-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+$breakpoint-tablet: 768px;
+
+.article-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 1rem;
+
+  @media (min-width: $breakpoint-tablet) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.article-preview {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.article-preview-image {
+  display: block;
+  margin-bottom: 0.5rem;
+
+  img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    border-radius: 4px;
+  }
+}
+
+@media (min-width: $breakpoint-tablet) {
+  .article-preview-image img {
+    max-width: 100%;
+  }
+}
+
+.article-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
