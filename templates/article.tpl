@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$article->name} — Блог</title>
-    <link rel="stylesheet" href="/css/main.css">
-</head>
-<body>
-    <header>
-        <h1><a href="/">Блог</a></h1>
-    </header>
-    <main>
+{include file='layout/header.tpl'}
         <article>
             <h2>{$article->name}</h2>
+            {if $article->image}
+                <div class="article-image">
+                    <img src="/{$article->image}" alt="{$article->name|escape}">
+                </div>
+            {/if}
             {if $article->categories}
                 <p>Категории:
                     {foreach $article->categories as $cat name=catLoop}
@@ -26,15 +19,20 @@
         </article>
 
         {if $similar}
-            <section>
+            <section class="similar-articles">
                 <h3>Похожие статьи</h3>
-                <ul>
+                <ul class="article-list">
                     {foreach $similar as $sim}
-                        <li><a href="/article/{$sim->slug}">{$sim->name}</a></li>
+                        <li class="article-preview">
+                            {if $sim->image}
+                                <a href="/article/{$sim->slug}" class="article-preview-image">
+                                    <img src="/{$sim->image}" alt="{$sim->name|escape}" loading="lazy">
+                                </a>
+                            {/if}
+                            <a href="/article/{$sim->slug}">{$sim->name}</a>
+                        </li>
                     {/foreach}
                 </ul>
             </section>
         {/if}
-    </main>
-</body>
-</html>
+{include file='layout/footer.tpl'}

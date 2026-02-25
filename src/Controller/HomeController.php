@@ -28,6 +28,7 @@ final class HomeController
                 'articles' => $articles,
             ];
         }
+        $this->smarty->assign('pageTitle', 'Блог');
         $this->smarty->assign('categoriesWithArticles', $categoriesWithArticles);
         return $this->smarty->fetch('home.tpl');
     }

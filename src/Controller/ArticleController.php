@@ -22,6 +22,7 @@ final class ArticleController
         $article = $this->articleRepository->getBySlug($slug);
         if ($article === null) {
             http_response_code(404);
+            $this->smarty->assign('pageTitle', '404 — Не найдено');
             return $this->smarty->fetch('404.tpl');
         }
 
@@ -30,6 +31,7 @@ final class ArticleController
         $categoryIds = array_map(fn ($c) => $c->id, $article->categories);
         $similar = $this->articleRepository->getSimilar($article->id, $categoryIds, 3);
 
+        $this->smarty->assign('pageTitle', $article->name . ' — Блог');
         $this->smarty->assign('article', $article);
         $this->smarty->assign('similar', $similar);
 

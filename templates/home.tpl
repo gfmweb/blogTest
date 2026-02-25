@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Блог</title>
-    <link rel="stylesheet" href="/css/main.css">
-</head>
-<body>
-    <header>
-        <h1><a href="/">Блог</a></h1>
-    </header>
-    <main>
+{include file='layout/header.tpl'}
         {foreach $categoriesWithArticles as $item}
-            <section>
+            <section class="category-block">
                 <h2>{$item.category->name}</h2>
                 <p>{$item.category->description}</p>
-                <ul>
+                <ul class="article-list">
                     {foreach $item.articles as $article}
-                        <li>
+                        <li class="article-preview">
+                            {if $article->image}
+                                <a href="/article/{$article->slug}" class="article-preview-image">
+                                    <img src="/{$article->image}" alt="{$article->name|escape}" loading="lazy">
+                                </a>
+                            {/if}
                             <a href="/article/{$article->slug}">{$article->name}</a>
                         </li>
                     {/foreach}
@@ -25,6 +18,4 @@
                 <p><a href="/category/{$item.category->slug}">Все статьи</a></p>
             </section>
         {/foreach}
-    </main>
-</body>
-</html>
+{include file='layout/footer.tpl'}

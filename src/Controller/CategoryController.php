@@ -22,6 +22,7 @@ final class CategoryController
         $category = $this->categoryRepository->getBySlug($slug);
         if ($category === null) {
             http_response_code(404);
+            $this->smarty->assign('pageTitle', '404 — Не найдено');
             return $this->smarty->fetch('404.tpl');
         }
 
@@ -36,6 +37,7 @@ final class CategoryController
         $this->smarty->assign('page', $page);
         $this->smarty->assign('totalPages', $totalPages);
         $this->smarty->assign('sortBy', $sortBy);
+        $this->smarty->assign('pageTitle', $category->name . ' — Блог');
 
         return $this->smarty->fetch('category.tpl');
     }

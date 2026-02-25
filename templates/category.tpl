@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$category->name} — Блог</title>
-    <link rel="stylesheet" href="/css/main.css">
-</head>
-<body>
-    <header>
-        <h1><a href="/">Блог</a></h1>
-    </header>
-    <main>
+{include file='layout/header.tpl'}
         <section>
             <h2>{$category->name}</h2>
             <p>{$category->description}</p>
@@ -29,9 +17,14 @@
                 {/if}
             </p>
 
-            <ul>
+            <ul class="article-list">
                 {foreach $articles as $article}
-                    <li>
+                    <li class="article-preview">
+                        {if $article->image}
+                            <a href="/article/{$article->slug}" class="article-preview-image">
+                                <img src="/{$article->image}" alt="{$article->name|escape}" loading="lazy">
+                            </a>
+                        {/if}
                         <a href="/article/{$article->slug}">{$article->name}</a>
                     </li>
                 {/foreach}
@@ -49,6 +42,4 @@
                 </nav>
             {/if}
         </section>
-    </main>
-</body>
-</html>
+{include file='layout/footer.tpl'}
