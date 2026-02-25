@@ -105,16 +105,6 @@ npm install
 npm run build:css
 ```
 
-Либо в контейнере, если там есть Node/npm:
-
-```bash
-docker compose exec php npm install
-docker compose exec php npm run build:css
-```
-
-Если Node в контейнере не установлен, выполняйте `npm run build:css` локально; скомпилированный `public/css/main.css` будет доступен приложению через volume.
-
----
 
 ## 7. Запуск приложения и проверка
 
@@ -125,18 +115,7 @@ docker compose exec php npm run build:css
 
 ---
 
-## Полезные команды
 
-| Действие | Команда |
-|----------|---------|
-| Остановить контейнеры | `docker compose down` |
-| Остановить и удалить данные БД | `docker compose down -v` |
-| Просмотр логов | `docker compose logs -f` |
-| Логи только PHP | `docker compose logs -f php` |
-| Зайти в shell контейнера PHP | `docker compose exec php sh` |
-| Подключиться к MySQL | `docker compose exec mysql mysql -u blog -p blog` (пароль из `MYSQL_PASSWORD`) |
-
----
 
 ## Структура проекта (кратко)
 
@@ -147,4 +126,4 @@ docker compose exec php npm run build:css
 - `scripts/` — `db-setup.php` (миграция + сидирование), `migrate.php`, `seed.php` (отдельно при необходимости)
 - `scss/` — исходники стилей
 
-Все команды установки зависимостей и настройки БД выполняются **внутри контейнера** (`docker compose exec php ...`), как принято в проекте.
+
